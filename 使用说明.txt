@@ -1,0 +1,11 @@
+1.
+文件目录\Article-Management-System\big-event=hou\src\main\java\com\itheima\bigevent\utils\AliOssUtil.java
+在文件 AliOssUtil.java 中，第 12 行和第 13 行改为
+
+新佛曰：諸隸僧降吽諸陀摩隸僧提缽薩劫僧如咤迦眾蜜隸空波提彌喼修慧婆婆提眾迦即訶吽耨咒斯迦提如眾咒塞彌咒斯嚴提眾劫喼宣心伏叻是薩菩提夷諸叻降彌所陀伏喃迦寂薩僧迦愍斯婆宣夷僧波訶祗尊叻修聞莊叻塞提僧空陀修吽提諸婆提塞提隸莊叻吶吽即塞修眾嚴若蜜所色色若若般訶訶僧兜耨提寂眾菩般囉諦陀阿寂眾念諸般若闍我祗即修色摩空提即如斯波斯隸般色空宣摩咤彌修即吽是兜諸訶提尊喃訶婆空般波即吽訶僧色缽薩若般僧眾寂念如囑
+
+上文在http://hi.pcmoe.net/buddha.html网站解密
+
+2.
+需要使用redis，启动位置在
+文件目录\Article-Management-System\big-event=hou\start_redis.bat,但是需要编辑脚本内容，指向自己的redis所在地址，使用的redis版本为Redis-x64-5.0.14.1
