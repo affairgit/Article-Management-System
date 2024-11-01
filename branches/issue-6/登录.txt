@@ -1,0 +1,129 @@
+// 获取表单元素
+const form = document.getElementById('loginForm');
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+
+// 提交事件监听器
+form.addEventListener('submit', (event) => {
+  event.preventDefault(); // 阻止默认提交
+
+  // 表单验证
+  const isValid = validateForm();
+
+  if (isValid) {
+    // 表单验证通过，提交表单
+    alert('登录成功');
+    form.submit(); // 提交表单
+  }
+});
+
+// 表单验证函数
+function validateForm() {
+  let isValid = true;
+
+  // 验证用户名（必填，最多 50 字符）
+  if (!usernameInput.value.trim()) {
+    showError(usernameInput, '用户名不能为空');
+    isValid = false;
+  } else if (usernameInput.value.length > 50) {
+    showError(usernameInput, '用户名不能超过 50 个字符');
+    isValid = false;
+  } else {
+    clearError(usernameInput);
+  }
+
+  // 验证密码（必填，至少 6 个字符）
+  if (!passwordInput.value.trim()) {
+    showError(passwordInput, '密码不能为空');
+    isValid = false;
+  } else if (passwordInput.value.length < 6) {
+    showError(passwordInput, '密码不能少于 6 个字符');
+    isValid = false;
+  } else {
+    clearError(passwordInput);
+  }
+
+  return isValid;
+}
+
+// 显示错误信息
+function showError(input, message) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = message;
+  errorElement.classList.add('error');
+}
+
+// 清除错误信息
+function clearError(input) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = '';
+  errorElement.classList.remove('error');
+}
+
+// Import the functions to be tested
+const { validateForm, showError, clearError } = require('./loginValidation'); // 假设文件名为 loginValidation.js
+
+describe('登录表单验证测试', () => {
+  
+  let formElements;
+
+  // 模拟表单元素
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <form id="loginForm">
+        <input type="text" id="username" name="username" />
+        <input type="password" id="password" name="password" />
+        <span class="error-message"></span>
+      </form>
+    `;
+    
+    formElements = {
+      username: document.getElementById('username'),
+      password: document.getElementById('password')
+    };
+  });
+
+  test('用户名和密码均通过验证', () => {
+    formElements.username.value = 'user123';
+    formElements.password.value = 'securePassword';
+
+    expect(validateForm()).toBe(true);
+  });
+
+  test('用户名为空时不通过验证', () => {
+    formElements.username.value = ''; // 空用户名
+    formElements.password.value = 'securePassword';
+
+    expect(validateForm()).toBe(false);
+  });
+
+  test('用户名超过 50 字符时不通过验证', () => {
+    formElements.username.value = 'a'.repeat(51); // 51 个字符
+    formElements.password.value = 'securePassword';
+
+    expect(validateForm()).toBe(false);
+  });
+
+  test('密码为空时不通过验证', () => {
+    formElements.username.value = 'user123';
+    formElements.password.value = ''; // 空密码
+
+    expect(validateForm()).toBe(false);
+  });
+
+  test('密码少于 6 个字符时不通过验证', () => {
+    formElements.username.value = 'user123';
+    formElements.password.value = '123'; // 密码少于 6 字符
+
+    expect(validateForm()).toBe(false);
+  });
+
+  test('清除错误信息的测试', () => {
+    formElements.username.value = ''; // 空用户名
+    showError(formElements.username, '用户名不能为空');
+    
+    clearError(formElements.username); // 清除错误
+    const errorElement = formElements.username.nextElementSibling;
+    expect(errorElement.textContent).toBe('');
+  });
+});
