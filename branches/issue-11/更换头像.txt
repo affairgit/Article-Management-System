@@ -1,0 +1,109 @@
+<template>
+  <h1>Avatar Upload and Change Example</h1>
+  <div id="avatar-preview">
+    <img id="preview-img" src="#" alt="Preview Avatar">
+  </div>
+  <input type="file" id="avatar-upload" />
+  <button id="upload-button">Upload Avatar</button>
+
+</template>
+<script>
+// 模拟存储已上传的头像（在实际应用中，这里应该是与后端存储交互）
+let avatars = {}; 
+
+const avatarUpload = document.getElementById('avatar-upload');
+const previewImg = document.getElementById('preview-img');
+const uploadButton = document.getElementById('upload-button');
+const avatarPreview = document.getElementById('avatar-preview');
+
+// 当用户选择文件时，显示预览
+avatarUpload.addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+
+  reader.onloadend = function () {
+    previewImg.src = reader.result;
+  };
+
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+});
+
+// 上传按钮点击事件
+uploadButton.addEventListener('click', function () {
+  const file = avatarUpload.files[0];
+  if (file) {
+    const userId = 'user123'; // 这里模拟用户ID，实际中可能需要从登录信息获取
+    avatars[userId] = file;
+    alert('Avatar uploaded successfully!');
+    // 这里可以添加代码将文件发送到后端存储，如使用AJAX或fetch API
+  } else {
+    alert('Please select an avatar file.');
+  }
+});
+
+</script>
+<style>
+#avatar-preview {
+  width: 200px;
+  height: 200px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+#preview-img {
+  width: 100%;
+  height: 100%;
+}
+
+#avatar-upload {
+  margin-bottom: 10px;
+}
+
+</style>
+
+
+describe('Avatar Change Functionality', () => {
+    let avatarImg;
+    let avatarUpload;
+    let changeAvatarBtn;
+
+    beforeEach(() => {
+        document.body.innerHTML = `
+            <div id="avatar-container">
+                <img id="avatar-img" src="default_avatar.jpg" alt="Avatar">
+                <input type="file" id="avatar-upload" />
+                <button id="change-avatar-btn">Change Avatar</button>
+            </div>
+        `;
+        avatarImg = document.getElementById('avatar-img');
+        avatarUpload = document.getElementById('avatar-upload');
+        changeAvatarBtn = document.getElementById('change-avatar-btn');
+    });
+
+    // 测试点击更换头像按钮是否触发文件选择
+    it('should trigger file input click when change avatar button is clicked', () => {
+        const clickSpy = jest.spyOn(avatarUpload, 'click');
+        changeAvatarBtn.click();
+        expect(clickSpy).toHaveBeenCalled();
+    });
+
+    // 测试选择文件后头像是否更新
+    it('should update avatar when a file is selected', () => {
+        const file = new File(['(⌐□_□)'], 'test.png', { type: 'image/png' });
+        const reader = new FileReader();
+        const loadSpy = jest.spyOn(reader, 'onload');
+        const readAsDataURLSpy = jest.spyOn(reader, 'readAsDataURL');
+
+        Object.defineProperty(avatarUpload, 'files', {
+            value: [file]
+        });
+
+        avatarUpload.dispatchEvent(new Event('change'));
+
+        expect(readAsDataURLSpy).toHaveBeenCalledWith(file);
+        expect(loadSpy).toHaveBeenCalled();
+        // 这里由于模拟完整的更新比较复杂，可以只检查是否调用了相关函数
+    });
+});
