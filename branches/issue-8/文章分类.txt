@@ -1,0 +1,27 @@
+// 模拟文章对象
+function Article(content) {
+  this.content = content;
+}
+
+// 文章分类函数
+function categorizeArticle(article) {
+  if (article.content.toLowerCase().includes('科技')) {
+    return '科技';
+  } else if (article.content.toLowerCase().includes('娱乐')) {
+    return '娱乐';
+  }
+  return '其他';
+}
+
+
+const { Article, categorizeArticle } = require('./articleCategorization');
+
+describe('文章分类测试', () => {
+  test('包含科技关键词的文章分类为科技', () => {
+    const article = new Article('这是一篇关于新科技发明的文章');
+    expect(categorizeArticle(article)).toBe('科技');
+  });
+
+  test('包含娱乐关键词的文章分类为娱乐', () => {
+    const article = new Article('最新的娱乐新闻很有趣');
+    expect(categorizeArticle(article)).toBe('娱乐');
