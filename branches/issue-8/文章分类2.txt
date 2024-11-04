@@ -1,0 +1,109 @@
+  <script>
+        const form = document.getElementById('articleForm');
+        const titleInput = document.getElementById('title');
+        const categorySelect = document.getElementById('category');
+
+        // 提交事件监听器
+        form.addEventListener('submit', (event) => {
+            event.preventDefault(); // 阻止默认提交
+
+            // 表单验证
+            const isValid = validateForm();
+
+            if (isValid) {
+                // 表单验证通过，提交表单
+                alert('文章提交成功');
+                form.submit(); // 提交表单
+            }
+        });
+
+        // 表单验证函数
+        function validateForm() {
+            let isValid = true;
+
+            // 验证文章标题（必填，最多 100 字符）
+            if (!titleInput.value.trim()) {
+                showError(titleInput, '文章标题不能为空');
+                isValid = false;
+            } else if (titleInput.value.length > 100) {
+                showError(titleInput, '文章标题不能超过 100 个字符');
+                isValid = false;
+            } else {
+                clearError(titleInput);
+            }
+
+            // 验证文章分类（必填）
+            if (categorySelect.value === '') {
+                showError(categorySelect, '请选择文章分类');
+                isValid = false;
+            } else {
+                clearError(categorySelect);
+            }
+
+            return isValid;
+        }
+
+        // 显示错误信息
+        function showError(input, message) {
+            const errorElement = input.nextElementSibling;
+            errorElement.textContent = message;
+            errorElement.classList.add('error');
+        }
+
+        // 清除错误信息
+        function clearError(input) {
+            const errorElement = input.nextElementSibling;
+            errorElement.textContent = '';
+            errorElement.classList.remove('error');
+        }
+    </script>
+// 显示错误信息
+function showError(input, message) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = message;
+  errorElement.classList.add('error');
+}
+
+// 清除错误信息
+function clearError(input) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = '';
+  errorElement.classList.remove('error');
+}
+
+
+describe('文章分类表单验证', () => {
+    let dom;
+    let form;
+    let titleInput;
+    let categorySelect;
+
+    beforeEach(() => {
+        dom = new JSDOM(html);
+        form = dom.window.document.getElementById('articleForm');
+        titleInput = dom.window.document.getElementById('title');
+        categorySelect = dom.window.document.getElementById('category');
+        
+        // 绑定验证函数
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            validateForm();
+        });
+    });
+
+    test('有效输入', () => {
+        titleInput.value = '我的第一篇文章';
+        categorySelect.value = '技术';
+        form.dispatchEvent(new dom.window.Event('submit'));
+        // 这里应该有逻辑检查成功提交
+    });
+
+    test('标题为空', () => {
+        titleInput.value = '';
+        categorySelect.value = '技术';
+        form.dispatchEvent(new dom.window.Event('submit'));
+        // 检查错误消息
+    });
+
+    // 继续添加其他测试...
+});
