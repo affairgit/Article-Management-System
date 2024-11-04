@@ -1,0 +1,90 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+articles = []
+
+# 添加文章
+@app.route('/articles', methods=['POST'])
+def add_article():
+    data = request.json
+    article = {
+        'id': len(articles) + 1,
+        'title': data['title'],
+        'content': data['content'],
+        'category': data['category'],
+        'published': False
+    }
+    articles.append(article)
+    return jsonify(article), 201
+
+# 获取文章列表
+@app.route('/articles', methods=['GET'])
+def get_articles():
+    return jsonify(articles), 200
+
+# 编辑文章
+@app.route('/articles/<int:article_id>', methods=['PUT'])
+def edit_article(article_id):
+    data = request.json
+    for article in articles:
+        if article['id'] == article_id:
+            article['title'] = data['title']
+            article['content'] = data['content']
+            article['category'] = data['category']
+            return jsonify(article), 200
+    return jsonify({'error': 'Article not found'}), 404
+
+# 删除文章
+@app.route('/articles/<int:article_id>', methods=['DELETE'])
+def delete_article(article_id):
+    global articles
+    articles = [article for article in articles if article['id'] != article_id]
+    return jsonify({'result': 'Article deleted'}), 204
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+import unittest
+
+class ArticleManagementTestCase(unittest.TestCase):
+    def setUp(self):
+        self.app = app.test_client()
+        self.app.testing = True
+
+    def test_save_article_create(self):
+        response = self.app.post('/articles', json={
+            'title': 'New Article',
+            'content': 'This is a new article.',
+            'category': 'News'
+        })
+        self.assertEqual(response.status_code, 201)
+        self.assertIn('New Article', response.get_data(as_text=True))
+
+    def test_save_article_edit(self):
+        self.app.post('/articles', json={
+            'title': 'Old Article',
+            'content': 'This article will be edited.',
+            'category': 'General'
+        })
+        response = self.app.put('/articles/1', json={
+            'title': 'Edited Article',
+            'content': 'This article has been edited.',
+            'category': 'General'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Edited Article', response.get_data(as_text=True))
+
+    def test_delete_article(self):
+        self.app.post('/articles', json={
+            'title': 'Article to Delete',
+            'content': 'This article will be deleted.',
+            'category': 'General'
+        })
+        response = self.app.delete('/articles/1')
+        self.assertEqual(response.status_code, 204)
+        response = self.app.get('/articles')
+        self.assertNotIn('Article to Delete', response.get_data(as_text=True))
+
+if __name__ == '__main__':
+    unittest.main()
