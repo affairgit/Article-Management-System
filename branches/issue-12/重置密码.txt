@@ -1,0 +1,151 @@
+// 获取表单元素
+const resetForm = document.getElementById('resetForm');
+const emailInput = document.getElementById('email');
+const newPasswordInput = document.getElementById('newPassword');
+const confirmPasswordInput = document.getElementById('confirmPassword');
+
+// 提交事件监听器
+resetForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // 阻止默认提交
+
+  // 表单验证
+  const isValid = validateResetForm();
+
+  if (isValid) {
+    // 表单验证通过，提交表单
+    alert('密码重置成功');
+    resetForm.submit(); // 提交表单
+  }
+});
+
+// 表单验证函数
+function validateResetForm() {
+  let isValid = true;
+
+  // 验证邮箱（必填，符合邮箱格式）
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailInput.value.trim() || !emailPattern.test(emailInput.value)) {
+    showError(emailInput, '请输入有效的邮箱地址');
+    isValid = false;
+  } else {
+    clearError(emailInput);
+  }
+
+  // 验证新密码（必填，至少 6 个字符）
+  if (!newPasswordInput.value.trim()) {
+    showError(newPasswordInput, '新密码不能为空');
+    isValid = false;
+  } else if (newPasswordInput.value.length < 6) {
+    showError(newPasswordInput, '新密码不能少于 6 个字符');
+    isValid = false;
+  } else {
+    clearError(newPasswordInput);
+  }
+
+  // 验证确认密码（与新密码匹配）
+  if (newPasswordInput.value !== confirmPasswordInput.value) {
+    showError(confirmPasswordInput, '确认密码不匹配');
+    isValid = false;
+  } else {
+    clearError(confirmPasswordInput);
+  }
+
+  return isValid;
+}
+
+// 显示错误信息
+function showError(input, message) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = message;
+  errorElement.classList.add('error');
+}
+
+// 清除错误信息
+function clearError(input) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = '';
+  errorElement.classList.remove('error');
+}
+
+// Import the functions to be tested
+const { validateResetForm, showError, clearError } = require('./resetPasswordValidation'); // 假设文件名为 resetPasswordValidation.js
+
+describe('重置密码表单验证测试', () => {
+  
+  let formElements;
+
+  // 模拟表单元素
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <form id="resetForm">
+        <input type="text" id="email" name="email" />
+        <input type="password" id="newPassword" name="newPassword" />
+        <input type="password" id="confirmPassword" name="confirmPassword" />
+        <span class="error-message"></span>
+      </form>
+    `;
+    
+    formElements = {
+      email: document.getElementById('email'),
+      newPassword: document.getElementById('newPassword'),
+      confirmPassword: document.getElementById('confirmPassword')
+    };
+  });
+
+  test('邮箱、新密码和确认密码均通过验证', () => {
+    formElements.email.value = 'user@example.com';
+    formElements.newPassword.value = 'securePassword';
+    formElements.confirmPassword.value = 'securePassword';
+
+    expect(validateResetForm()).toBe(true);
+  });
+
+  test('邮箱为空时不通过验证', () => {
+    formElements.email.value = ''; // 空邮箱
+    formElements.newPassword.value = 'securePassword';
+    formElements.confirmPassword.value = 'securePassword';
+
+    expect(validateResetForm()).toBe(false);
+  });
+
+  test('邮箱格式不正确时不通过验证', () => {
+    formElements.email.value = 'invalid-email'; // 无效邮箱格式
+    formElements.newPassword.value = 'securePassword';
+    formElements.confirmPassword.value = 'securePassword';
+
+    expect(validateResetForm()).toBe(false);
+  });
+
+  test('新密码为空时不通过验证', () => {
+    formElements.email.value = 'user@example.com';
+    formElements.newPassword.value = ''; // 空新密码
+    formElements.confirmPassword.value = 'securePassword';
+
+    expect(validateResetForm()).toBe(false);
+  });
+
+  test('新密码少于 6 个字符时不通过验证', () => {
+    formElements.email.value = 'user@example.com';
+    formElements.newPassword.value = '123'; // 新密码少于 6 字符
+    formElements.confirmPassword.value = '123';
+
+    expect(validateResetForm()).toBe(false);
+  });
+
+  test('确认密码不匹配时不通过验证', () => {
+    formElements.email.value = 'user@example.com';
+    formElements.newPassword.value = 'securePassword';
+    formElements.confirmPassword.value = 'differentPassword'; // 不匹配
+
+    expect(validateResetForm()).toBe(false);
+  });
+
+  test('清除错误信息的测试', () => {
+    formElements.email.value = ''; // 空邮箱
+    showError(formElements.email, '请输入有效的邮箱地址');
+    
+    clearError(formElements.email); // 清除错误
+    const errorElement = formElements.email.nextElementSibling;
+    expect(errorElement.textContent).toBe('');
+  });
+});
