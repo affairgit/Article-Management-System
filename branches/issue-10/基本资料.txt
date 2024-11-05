@@ -1,0 +1,110 @@
+import javax.persistence.GeneratedValue;
+package com.example.profile;
+
+public class Profile {
+    private String name;
+    private int age;
+    private String email;
+    private String address;
+
+    // Constructor
+    public Profile(String name, int age, String email, String address) {
+        this.name = name;
+        this.age = age;
+        this.email = email;
+        this.address = address;
+    }
+
+    // Getters and Setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+}
+ProfileController.java
+控制器类用于处理HTTP请求并返回用户的基本资料页面。
+package com.example.profile;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class ProfileController {
+
+    @GetMapping("/profile")
+    public String viewProfile(Model model) {
+        // 创建一个示例Profile对象
+        Profile profile = new Profile("张三", 28, "zhangsan@example.com", "北京市朝阳区");
+
+        // 将Profile对象添加到Model中，供视图使用
+        model.addAttribute("profile", profile);
+
+        // 返回模板名称，这会渲染 profile-detail.html 页面
+        return "profile-detail";
+    }
+}
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+import static org.mockito.Mockito.*;
+
+@WebMvcTest(ProfileController.class)
+public class ProfileControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    private Profile mockProfile;
+
+    @BeforeEach
+    public void setup() {
+        // 创建一个假的Profile对象
+        mockProfile = new Profile("张三", 28, "zhangsan@example.com", "北京市朝阳区");
+    }
+
+    @Test
+    public void testViewProfile() throws Exception {
+        // 模拟控制器返回的Profile对象，并检查返回的视图是否正确
+        mockMvc.perform(MockMvcRequestBuilders.get("/profile"))
+                .andExpect(MockMvcResultMatchers.status().isOk())  // 确保返回的HTTP状态是200 OK
+                .andExpect(MockMvcResultMatchers.view().name("profile-detail"))  // 检查返回的视图名称是否为"profile-detail"
+                .andExpect(MockMvcResultMatchers.model().attributeExists("profile"))  // 确保模型中包含"profile"属性
+                .andExpect(MockMvcResultMatchers.model().attribute("profile", mockProfile));  // 检查模型属性值是否是mockProfile
+    }
+}
+
