@@ -1,0 +1,152 @@
+// 获取表单元素
+const form = document.getElementById('categoryForm');
+const categoryNameInput = document.getElementById('categoryName');
+const categoryDescriptionInput = document.getElementById('categoryDescription');
+const fileInput = document.getElementById('fileUpload');
+
+// 提交事件监听器
+form.addEventListener('submit', (event) => {
+  event.preventDefault(); // 阻止默认提交
+
+  // 表单验证
+  const isValid = validateForm();
+
+  if (isValid) {
+    // 表单验证通过，提交表单
+    alert('分类信息提交成功');
+    form.submit(); // 提交表单
+  }
+});
+
+// 表单验证函数
+function validateForm() {
+  let isValid = true;
+
+  // 验证分类名称（必填，最多 50 字符）
+  if (!categoryNameInput.value.trim()) {
+    showError(categoryNameInput, '分类名称不能为空');
+    isValid = false;
+  } else if (categoryNameInput.value.length > 50) {
+    showError(categoryNameInput, '分类名称不能超过 50 个字符');
+    isValid = false;
+  } else {
+    clearError(categoryNameInput);
+  }
+
+  // 验证分类描述（可选，最多 200 字符）
+  if (categoryDescriptionInput.value.length > 200) {
+    showError(categoryDescriptionInput, '分类描述不能超过 200 个字符');
+    isValid = false;
+  } else {
+    clearError(categoryDescriptionInput);
+  }
+
+  // 验证附件上传（可选，限制为 JPEG 或 PNG 格式，最大 5MB）
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    const fileType = file.type;
+    const fileSize = file.size;
+
+    if (!['image/jpeg', 'image/png'].includes(fileType)) {
+      showError(fileInput, '只能上传 JPEG 或 PNG 格式的文件');
+      isValid = false;
+    } else if (fileSize > 5 * 1024 * 1024) { // 限制 5MB
+      showError(fileInput, '文件大小不能超过 5MB');
+      isValid = false;
+    } else {
+      clearError(fileInput);
+    }
+  }
+
+  return isValid;
+}
+
+// 显示错误信息
+function showError(input, message) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = message;
+  errorElement.classList.add('error');
+}
+
+// 清除错误信息
+function clearError(input) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = '';
+  errorElement.classList.remove('error');
+}
+// 获取表单元素
+const form = document.getElementById('categoryForm');
+const categoryNameInput = document.getElementById('categoryName');
+const categoryDescriptionInput = document.getElementById('categoryDescription');
+const fileInput = document.getElementById('fileUpload');
+
+// 提交事件监听器
+form.addEventListener('submit', (event) => {
+  event.preventDefault(); // 阻止默认提交
+
+  // 表单验证
+  const isValid = validateForm();
+
+  if (isValid) {
+    // 表单验证通过，提交表单
+    alert('分类信息提交成功');
+    form.submit(); // 提交表单
+  }
+});
+
+// 表单验证函数
+function validateForm() {
+  let isValid = true;
+
+  // 验证分类名称（必填，最多 50 字符）
+  if (!categoryNameInput.value.trim()) {
+    showError(categoryNameInput, '分类名称不能为空');
+    isValid = false;
+  } else if (categoryNameInput.value.length > 50) {
+    showError(categoryNameInput, '分类名称不能超过 50 个字符');
+    isValid = false;
+  } else {
+    clearError(categoryNameInput);
+  }
+
+  // 验证分类描述（可选，最多 200 字符）
+  if (categoryDescriptionInput.value.length > 200) {
+    showError(categoryDescriptionInput, '分类描述不能超过 200 个字符');
+    isValid = false;
+  } else {
+    clearError(categoryDescriptionInput);
+  }
+
+  // 验证附件上传（可选，限制为 JPEG 或 PNG 格式，最大 5MB）
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    const fileType = file.type;
+    const fileSize = file.size;
+
+    if (!['image/jpeg', 'image/png'].includes(fileType)) {
+      showError(fileInput, '只能上传 JPEG 或 PNG 格式的文件');
+      isValid = false;
+    } else if (fileSize > 5 * 1024 * 1024) { // 限制 5MB
+      showError(fileInput, '文件大小不能超过 5MB');
+      isValid = false;
+    } else {
+      clearError(fileInput);
+    }
+  }
+
+  return isValid;
+}
+
+// 显示错误信息
+function showError(input, message) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = message;
+  errorElement.classList.add('error');
+}
+
+// 清除错误信息
+function clearError(input) {
+  const errorElement = input.nextElementSibling;
+  errorElement.textContent = '';
+  errorElement.classList.remove('error');
+}
